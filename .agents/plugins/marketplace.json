@@ -1,0 +1,20 @@
+{
+  "name": "cursor-to-codex",
+  "interface": {
+    "displayName": "Cursor to Codex"
+  },
+  "plugins": [
+    {
+      "name": "cursor-to-codex",
+      "source": {
+        "source": "local",
+        "path": "./plugins/cursor-to-codex"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    }
+  ]
+}

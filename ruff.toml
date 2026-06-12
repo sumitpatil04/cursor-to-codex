@@ -1,0 +1,9 @@
+# Dev-only lint config. End users of the plugin need nothing here.
+target-version = "py311"
+line-length = 110
+
+include = ["**/*.py"]
+extend-exclude = ["**/__pycache__"]
+
+[lint]
+select = ["E", "F", "I", "UP", "B"]

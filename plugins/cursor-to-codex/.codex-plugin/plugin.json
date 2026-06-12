@@ -1,0 +1,27 @@
+{
+  "name": "cursor-to-codex",
+  "version": "0.1.0",
+  "description": "Migrate Cursor configuration (rules, skills, commands, MCP, hooks) into Codex artifacts (AGENTS.md, .codex/config.toml, .agents/skills, .codex/hooks.json).",
+  "author": {
+    "name": "cursor-to-codex contributors"
+  },
+  "homepage": "https://github.com/sumitpatil04/cursor-to-codex",
+  "repository": "https://github.com/sumitpatil04/cursor-to-codex",
+  "license": "MIT",
+  "keywords": ["cursor", "codex", "migration", "agents.md", "mcp"],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Cursor to Codex",
+    "shortDescription": "Migrate Cursor config to Codex",
+    "longDescription": "One-time migrator that converts a repo's Cursor configuration into the equivalent Codex artifacts. Translates .cursor/rules/*.mdc, .cursorrules, skills, commands, .cursor/mcp.json, and .cursor/hooks.json into AGENTS.md (root + nested), .agents/skills, .codex/config.toml, and .codex/hooks.json for both project and global scopes.",
+    "developerName": "cursor-to-codex contributors",
+    "category": "Productivity",
+    "capabilities": ["Read", "Write"],
+    "defaultPrompt": [
+      "Migrate my Cursor configuration to Codex.",
+      "Preview the Cursor to Codex migration for this repo (dry run)."
+    ],
+    "brandColor": "#10A37F",
+    "composerIcon": "./assets/icon.svg"
+  }
+}

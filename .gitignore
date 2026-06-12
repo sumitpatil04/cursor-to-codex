@@ -1,0 +1,21 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.venv/
+venv/
+
+# OS
+.DS_Store
+
+# Test scratch / migration output produced while developing
+/tmp-fixture/
+*.local.json
+
+# Editor
+.idea/
+.vscode/
