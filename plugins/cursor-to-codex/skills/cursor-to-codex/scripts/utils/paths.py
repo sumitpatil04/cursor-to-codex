@@ -29,6 +29,9 @@ class Scope:
     name: str
     cursor_dir: Path
     cursorrules: Path
+    cursorignore: Path
+    cursorindexingignore: Path
+    environment_json: Path
     agents_md: Path
     base_dir: Path
     skills_dir: Path
@@ -52,6 +55,9 @@ def project_scope(root: Path) -> Scope:
         name="project",
         cursor_dir=root / ".cursor",
         cursorrules=root / ".cursorrules",
+        cursorignore=root / ".cursorignore",
+        cursorindexingignore=root / ".cursorindexingignore",
+        environment_json=root / ".cursor" / "environment.json",
         agents_md=root / "AGENTS.md",
         base_dir=root,
         skills_dir=root / ".agents" / "skills",
@@ -69,6 +75,9 @@ def global_scope(home: Path) -> Scope:
         name="global",
         cursor_dir=home / ".cursor",
         cursorrules=home / ".cursorrules",
+        cursorignore=home / ".cursorignore",
+        cursorindexingignore=home / ".cursorindexingignore",
+        environment_json=home / ".cursor" / "environment.json",
         agents_md=home / ".codex" / "AGENTS.md",
         base_dir=home / ".codex",
         skills_dir=home / ".agents" / "skills",
@@ -123,6 +132,9 @@ def custom_scope(source: Path, target: Path) -> Scope:
         name="custom",
         cursor_dir=source,
         cursorrules=base / ".cursorrules",
+        cursorignore=base / ".cursorignore",
+        cursorindexingignore=base / ".cursorindexingignore",
+        environment_json=source / "environment.json",
         agents_md=base / "AGENTS.md",
         base_dir=base,
         skills_dir=base / ".agents" / "skills",

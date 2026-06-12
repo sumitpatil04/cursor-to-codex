@@ -14,7 +14,7 @@ SCRIPTS = Path(__file__).resolve().parents[1] / (
 sys.path.insert(0, str(SCRIPTS))
 
 import cli  # noqa: E402
-from migrate import MigrationContext, hooks, mcp  # noqa: E402
+from migrate import MigrationContext, hooks, mcp, notices  # noqa: E402
 from migrate.rules import dir_prefix  # noqa: E402
 from utils import frontmatter, paths  # noqa: E402
 from utils.report import Report  # noqa: E402
@@ -144,6 +144,45 @@ class HooksConversion(unittest.TestCase):
         self.assertEqual(json.loads(ctx.scope.hooks_json.read_text())["hooks"], {"Stop": []})
         alt = ctx.scope.hooks_json.with_name("hooks.cursor-to-codex.json")
         self.assertTrue(alt.is_file())
+
+
+class Notices(unittest.TestCase):
+    def setUp(self) -> None:
+        import tempfile
+        self.tmp = tempfile.TemporaryDirectory()
+        self.root = Path(self.tmp.name)
+
+    def tearDown(self) -> None:
+        self.tmp.cleanup()
+
+    def test_reports_ignore_and_environment(self) -> None:
+        _write(self.root / ".cursorignore", "node_modules/\n.env\n")
+        _write(self.root / ".cursorindexingignore", "dist/\n")
+        _write(self.root / ".cursor" / "environment.json", '{"install": "npm i"}\n')
+        ctx = _project_ctx(self.root)
+        notices.run(ctx)
+        rows = {r.item_name: r.status for r in ctx.report.rows}
+        self.assertEqual(rows[".cursorignore"], "Not Added")
+        self.assertEqual(rows[".cursorindexingignore"], "Not Added")
+        self.assertEqual(rows[".cursor/environment.json"], "Not Added")
+        self.assertEqual(len(ctx.report.manual_fixes), 3)
+        # Never fabricates an unsupported .codexignore.
+        self.assertFalse((self.root / ".codexignore").exists())
+
+    def test_absent_emits_nothing(self) -> None:
+        ctx = _project_ctx(self.root)
+        notices.run(ctx)
+        self.assertEqual(ctx.report.rows, [])
+        self.assertEqual(ctx.report.manual_fixes, [])
+
+    def test_idempotent_no_files_written(self) -> None:
+        _write(self.root / ".cursorignore", "node_modules/\n")
+        before = sorted(p for p in self.root.rglob("*") if p.is_file())
+        ctx = _project_ctx(self.root)
+        notices.run(ctx)
+        notices.run(ctx)
+        after = sorted(p for p in self.root.rglob("*") if p.is_file())
+        self.assertEqual(before, after)
 
 
 class EndToEnd(unittest.TestCase):

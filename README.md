@@ -16,6 +16,18 @@ artifacts — in one shot, idempotently, with zero third-party dependencies.
 Full mapping with statuses and edge cases:
 [`plugins/cursor-to-codex/skills/cursor-to-codex/references/differences.md`](plugins/cursor-to-codex/skills/cursor-to-codex/references/differences.md).
 
+### What is not migrated (and why)
+
+- **Cursor editor/app settings** — `settings.json`, keybindings, themes, the
+  model picker, privacy mode, and memories configure the editor or live in app
+  state. Codex is an agent, not an editor, so it has no consumer for them. These
+  are intentionally left alone.
+- **Ignore files & cloud setup** — `.cursorignore`, `.cursorindexingignore`, and
+  `.cursor/environment.json` have no Codex equivalent (Codex has no
+  `.codexignore`; it restricts context via `.gitignore` + the sandbox). The tool
+  detects them and reports them under `## MANUAL MIGRATION REQUIRED` instead of
+  converting them — it never writes an unsupported target.
+
 ## Why it's safe
 
 - **One-time, but re-runnable.** Designed as a one-time cutover, yet every write
@@ -74,23 +86,10 @@ cursor-to-codex/
       scripts/
         cursor-to-codex.py                  # entry shim
         cli.py                              # argparse + orchestration
-        migrate/{instructions,rules,skills,commands,mcp,hooks}.py
+        migrate/{instructions,rules,skills,commands,mcp,hooks,notices}.py
         utils/{frontmatter,toml_writer,paths,report,validate}.py
   tests/test_cursor_to_codex.py
 ```
-
-## Contributing the skill to openai/skills
-
-The bundled skill is self-contained (pure stdlib, references one level deep), so
-it can also be contributed to the community [`openai/skills`](https://github.com/openai/skills)
-repo for discoverability — independent of this plugin, which is the source of
-truth:
-
-1. Fork `openai/skills`.
-2. Copy `plugins/cursor-to-codex/skills/cursor-to-codex/` into the fork at
-   `.experimental/cursor-to-codex/` (the community area; `.curated/` is
-   OpenAI-owned, do not target it).
-3. Open a PR. No code changes are required.
 
 ## Development
 

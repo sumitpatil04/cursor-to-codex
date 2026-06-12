@@ -11,7 +11,7 @@ import argparse
 import sys
 from pathlib import Path
 
-from migrate import MigrationContext, commands, hooks, instructions, mcp, rules, skills
+from migrate import MigrationContext, commands, hooks, instructions, mcp, notices, rules, skills
 from utils import paths
 from utils.report import Report
 from utils.validate import validate_scope
@@ -55,6 +55,7 @@ def migrate_scope(ctx: MigrationContext) -> None:
     commands.run(ctx)
     mcp.run(ctx)
     hooks.run(ctx)
+    notices.run(ctx)
 
 
 def scan(scope: paths.Scope) -> None:
@@ -71,6 +72,9 @@ def scan(scope: paths.Scope) -> None:
     print(f"  commands:          {_count_files(cd / 'commands', '*.md')}")
     print(f"  mcp.json:          {'yes' if (cd / 'mcp.json').is_file() else 'no'}")
     print(f"  hooks.json:        {'yes' if (cd / 'hooks.json').is_file() else 'no'}")
+    print(f"  .cursorignore:     {'yes (report-only)' if scope.cursorignore.is_file() else 'no'}")
+    print(f"  .cursorindexingignore: {'yes (report-only)' if scope.cursorindexingignore.is_file() else 'no'}")
+    print(f"  environment.json:  {'yes (report-only)' if scope.environment_json.is_file() else 'no'}")
 
 
 def _count_files(directory: Path, pattern: str) -> int:

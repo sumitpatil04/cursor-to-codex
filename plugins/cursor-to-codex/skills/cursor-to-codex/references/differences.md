@@ -102,8 +102,31 @@ If a non-managed `.codex/hooks.json` already exists, the migration writes
 clobbered) and flags it for manual merge. Re-runs detect the
 `_cursor_to_codex` sentinel and regenerate in place.
 
+## Settings & ignore files
+
+Cursor is a VS Code fork, so most of its "settings" configure the *editor*, not
+an agent. Codex is an agent (CLI + IDE extension) and has no consumer for them,
+so they are intentionally not migrated. Ignore files and cloud-agent setup have
+no Codex equivalent either, but the tool detects them and surfaces a manual note
+(report-only — no Codex file is written, and no unsupported `.codexignore` is
+fabricated).
+
+| Cursor source | Codex target | Status | Notes |
+| --- | --- | --- | --- |
+| `.cursorignore` | — | `Not Added` | Codex has no `.codexignore` ([openai/codex#1397](https://github.com/openai/codex/issues/1397)); restrict context via `.gitignore` + sandbox/`shell_environment_policy`. Reported for manual review. |
+| `.cursorindexingignore` | — | `Not Added` | As above; Codex does not index from a per-repo ignore file. Reported for manual review. |
+| `.cursor/environment.json` | — | `Not Added` | Cursor background/cloud-agent setup; Codex cloud uses its own environment config. Reported for manual review. |
+| editor `settings.json` / `keybindings.json` / themes | — | `Not Added` | Editor settings; Codex has no consumer. Not detected (intentional). |
+| Cursor model picker / rules toggles / privacy / memories | — | `Not Added` | App state, not portable repo files. Not migratable. |
+
 ## Not migrated
 
 - **Subagents** — Cursor has no subagent definition files to convert.
 - **Cursor matcher regexes** on shell hooks — Codex matchers filter tool names,
   not command text; carried into the report as a note, not silently dropped.
+- **Cursor editor/app settings** — `settings.json`, keybindings, themes, model
+  picker, privacy mode, and memories have no Codex equivalent (Codex is an agent,
+  not an editor). Not migrated by design.
+- **Ignore files & `environment.json`** — Codex cannot consume `.cursorignore`,
+  `.cursorindexingignore`, or `.cursor/environment.json`; they are detected and
+  reported under "MANUAL MIGRATION REQUIRED" rather than converted.

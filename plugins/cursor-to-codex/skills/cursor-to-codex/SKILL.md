@@ -36,6 +36,11 @@ scope (`./`) and the global scope (`~/`) when each has Cursor config:
 4. **Commands** — `.cursor/commands/*.md` -> one-file skills (`$name`).
 5. **MCP** — `.cursor/mcp.json` -> `.codex/config.toml` `[mcp_servers.*]`.
 6. **Hooks** — `.cursor/hooks.json` -> `.codex/hooks.json` (scripts copied).
+7. **Notices** — detect surfaces Codex cannot consume (`.cursorignore`,
+   `.cursorindexingignore`, `.cursor/environment.json`) and report them as
+   `Not Added` with a manual note. No Codex file is written for these, and no
+   `.codexignore` is fabricated. Cursor editor/app settings are intentionally
+   not migrated (Codex is an agent, not an editor).
 
 ## Commands
 
@@ -80,8 +85,9 @@ After a run, present the per-scope status table exactly as the CLI prints it:
 - `Added` — migrated cleanly; usable as-is.
 - `Check before using` — migrated but semantics differ (globs, hooks, HTTP MCP,
   disabled implicit invocation); a human must verify.
-- `Not Added` — no Codex equivalent (SSE MCP, `beforeReadFile` hooks); re-create
-  manually if needed.
+- `Not Added` — no Codex equivalent (SSE MCP, `beforeReadFile` hooks, ignore
+  files, `environment.json`, Cursor editor/app settings); re-create manually if
+  needed.
 
 The same content is written to `.codex/cursor-to-codex-report.txt`.
 
