@@ -26,53 +26,45 @@ Full mapping with statuses and edge cases:
   are preserved.
 - **No dependencies.** Pure Python standard library, `>= 3.11`.
 
-## Install (public)
-
-Once this repo is pushed to GitHub:
+## Install
 
 ```bash
 codex plugin marketplace add sumitpatil04/cursor-to-codex
-# restart Codex, then:
-/plugins            # install "cursor-to-codex"
+# restart Codex
 ```
 
-Then ask Codex: **"Migrate my Cursor configuration to Codex."**
+Then open `/plugins` and install **cursor-to-codex** (or run
+`codex plugin add cursor-to-codex@cursor-to-codex`). To pull later updates:
+`codex plugin marketplace upgrade`.
 
-## Try it locally now
+## Use it in Codex
 
-```bash
-./scripts/install-local.sh             # register this repo as a local marketplace
-./scripts/install-local.sh --personal  # also copy into ~/.codex/plugins
-```
+Once installed, open Codex in a repository that still has a `.cursor/`
+directory and ask in plain language — the skill triggers automatically:
 
-Restart Codex, open `/plugins`, install `cursor-to-codex`.
+- **"Migrate my Cursor configuration to Codex."**
+- **"Preview the Cursor → Codex migration for this repo."** (dry run, writes nothing)
 
-If your marketplace is a *different* repo that references this one, use a
-git-subdir source instead of `local` in its `marketplace.json`:
+Codex performs the migration and prints a per-scope status table
+(`Added` / `Check before using` / `Not Added`) plus any
+`## MANUAL MIGRATION REQUIRED` notes. The same report is saved to
+`.codex/cursor-to-codex-report.txt`. The flow Codex follows:
 
-```json
-{ "source": { "source": "git", "repository": "sumitpatil04/cursor-to-codex", "path": "plugins/cursor-to-codex" } }
-```
+1. Inventory what exists (writes nothing).
+2. Preview the conversion (writes nothing).
+3. Migrate — project (`./`) and global (`~/`) scopes where present.
+4. Surface anything that needs review, then validate the output.
 
-## Manual CLI (no install)
-
-```bash
-cd /path/to/your/repo
-PY=plugins/cursor-to-codex/skills/cursor-to-codex/scripts/cursor-to-codex.py
-python3 $PY --scan-only        # inventory, writes nothing
-python3 $PY --dry-run          # preview, writes nothing
-python3 $PY                    # migrate (project + global where present)
-python3 $PY --validate-target  # verify output is well-formed
-```
-
-Flags: `--scope project|global|both` (default `both`), `--root <dir>`, and the
-advanced `--source <.cursor> --target <.codex>` pair.
+After migrating: resolve any `Check before using` items (see
+[`differences.md`](plugins/cursor-to-codex/skills/cursor-to-codex/references/differences.md)),
+review and trust hooks with `/hooks`, restart Codex, and you can retire
+`.cursor/` (the tool never deletes it).
 
 ## Repo layout
 
 ```
 cursor-to-codex/
-  .agents/plugins/marketplace.json          # local marketplace catalog
+  .agents/plugins/marketplace.json          # marketplace catalog
   plugins/cursor-to-codex/
     .codex-plugin/plugin.json               # plugin manifest
     assets/icon.svg
@@ -84,7 +76,6 @@ cursor-to-codex/
         cli.py                              # argparse + orchestration
         migrate/{instructions,rules,skills,commands,mcp,hooks}.py
         utils/{frontmatter,toml_writer,paths,report,validate}.py
-  scripts/install-local.sh
   tests/test_cursor_to_codex.py
 ```
 
